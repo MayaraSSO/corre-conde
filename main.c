@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 // --- CONFIGURAÇÕES DA PROJEÇÃO E JANELA ---
-#define NUM_PLATAFORMAS 4
+#define NUM_PLATAFORMAS 5
 #define TELA_LARGURA 800
 #define TELA_ALTURA 600
 
@@ -28,10 +28,12 @@ float deslocamentoNevoa = 0.0f;
 
 // Instanciamento dos volumes do cenário
 Plataforma cenario[NUM_PLATAFORMAS] = {
-    {0.0f, 50.0f, 400.0f, 40.0f},    // Chão inicial
-    {500.0f, 50.0f, 300.0f, 40.0f},  // Chão após o primeiro buraco
-    {950.0f, 150.0f, 150.0f, 20.0f}, // Plataforma flutuante 1
-    {1200.0f, 250.0f, 200.0f, 20.0f} // Plataforma flutuante 2
+
+    {0.0f, 50.0f, 400.0f, 40.0f},    // 0. Chão inicial
+    {500.0f, 50.0f, 300.0f, 40.0f},  // 1. Chão após o primeiro buraco
+    {950.0f, 150.0f, 150.0f, 20.0f}, // 2. Plataforma flutuante 1
+    {1200.0f, 250.0f, 200.0f, 20.0f},// 3. Plataforma flutuante 2
+    {250.0f, 90.0f, 40.0f, 80.0f}    // 4. Parede fixa para teste de colisão horizontal
 };
 
 // Constantes de translação

@@ -1,52 +1,37 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Conde.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Chao.tscn" type="PackedScene" id=2]
 
-[sub_resource type="CubeMesh" id=1]
-
-[sub_resource type="BoxShape" id=2]
+[sub_resource type="CapsuleShape" id=6]
 
 [sub_resource type="BoxShape" id=3]
 
 [node name="Fase1" type="Spatial"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 131.535, -7.29154, -67.3186 )
 
 [node name="Conde" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0 )
 
 [node name="Cam_Follow" type="Camera" parent="Conde"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12 )
 
-[node name="Chao" type="StaticBody" parent="."]
-transform = Transform( -15, -4.37114e-08, 0, 1.31134e-06, -0.5, 0, 0, 0, 2, 0, -3, 0 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Chao"]
-mesh = SubResource( 1 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Chao"]
-shape = SubResource( 2 )
-
-[node name="Chao2" type="StaticBody" parent="."]
-transform = Transform( -15, -4.37114e-08, 0, 1.31134e-06, -0.5, 0, 0, 0, 2, 35, -3, 0 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Chao2"]
-mesh = SubResource( 1 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Chao2"]
-shape = SubResource( 2 )
-
-[node name="Chao3" type="StaticBody" parent="."]
-transform = Transform( -3, -7.54979e-08, 0, 4.52987e-07, -0.5, 0, 0, 0, 2, 45, -0.5, 0 )
-
-[node name="MeshInstance" type="MeshInstance" parent="Chao3"]
-mesh = SubResource( 1 )
-
-[node name="CollisionShape" type="CollisionShape" parent="Chao3"]
-shape = SubResource( 2 )
+[node name="CollisionShape2" type="CollisionShape" parent="Conde"]
+shape = SubResource( 6 )
 
 [node name="ZonaLuz" type="Area" parent="."]
 
 [node name="CollisionShape" type="CollisionShape" parent="ZonaLuz"]
 transform = Transform( 5, 0, 0, 0, 0.5, 0, 0, 0, 2, 10, -2.5, 0 )
 shape = SubResource( 3 )
+
+[node name="Chao" parent="." instance=ExtResource( 2 )]
+
+[node name="Chao2" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 0 )
+
+[node name="Chao3" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, 0 )
 
 [connection signal="body_entered" from="ZonaLuz" to="Conde" method="_on_ZonaLuz_body_entered"]
 [connection signal="body_exited" from="ZonaLuz" to="Conde" method="_on_ZonaLuz_body_exited"]

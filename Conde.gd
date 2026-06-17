@@ -43,6 +43,9 @@ func _physics_process(delta):
 		# Subtrai o dano normalmente
 		energia_vital -= dano_da_luz_por_segundo * delta
 		
+		# Atualiza o visual da barra na tela
+		$HUD/BarraVida.value = energia_vital
+		
 		# Guarda de segurança: se a energia cair abaixo de zero, fixamos em zero
 		if energia_vital <= 0:
 			energia_vital = 0
@@ -52,7 +55,6 @@ func _physics_process(delta):
 		else:
 			# O 'stepify' limpa os números quebrados do float, mostrando só 1 casa decimal
 			print("CUIDADO! Energia: ", stepify(energia_vital, 0.1))
-
 
 func _on_ZonaLuz_body_entered(body):
 	if body.name == "Conde":

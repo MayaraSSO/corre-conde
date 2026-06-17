@@ -1,27 +1,48 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Conde.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Chao.tscn" type="PackedScene" id=2]
 [ext_resource path="res://ZonaLuz.gd" type="Script" id=3]
+[ext_resource path="res://Alho.tscn" type="PackedScene" id=4]
 
 [sub_resource type="BoxShape" id=7]
 
-[sub_resource type="CubeMesh" id=8]
+[sub_resource type="SpatialMaterial" id=12]
+flags_unshaded = true
+albedo_color = Color( 1, 0.619608, 0.392157, 1 )
+
+[sub_resource type="CubeMesh" id=13]
 
 [sub_resource type="CapsuleShape" id=6]
+
+[sub_resource type="StyleBoxFlat" id=9]
+bg_color = Color( 0.901961, 0, 0, 1 )
+
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0.2, 0.2, 0.2, 1 )
+
+[sub_resource type="Environment" id=11]
+background_mode = 1
+background_color = Color( 0.0392157, 0.0392157, 0.0784314, 1 )
+ambient_light_color = Color( 0.54902, 0.54902, 0.54902, 1 )
+fog_enabled = true
+fog_color = Color( 0.301961, 0.301961, 0.301961, 1 )
+fog_depth_begin = 15.0
 
 [node name="Fase1" type="Spatial"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 131.535, -7.29154, -67.3186 )
 
 [node name="ZonaLuz" type="Area" parent="."]
-transform = Transform( 2, 0, 0, 0, 10, 0, 0, 0, 10, -15, 0, 0 )
+transform = Transform( 10, 0, 0, 0, 30, 0, 0, 0, 10, -15, 0, 0 )
 script = ExtResource( 3 )
 
 [node name="CollisionShape" type="CollisionShape" parent="ZonaLuz"]
 shape = SubResource( 7 )
 
 [node name="MeshInstance" type="MeshInstance" parent="ZonaLuz"]
-mesh = SubResource( 8 )
+transform = Transform( 15, 0, 0, 0, 30, 0, 0, 0, 10, 0, 0, 0 )
+material_override = SubResource( 12 )
+mesh = SubResource( 13 )
 
 [node name="Conde" parent="." instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0 )
@@ -31,6 +52,18 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12 )
 
 [node name="CollisionShape2" type="CollisionShape" parent="Conde"]
 shape = SubResource( 6 )
+
+[node name="HUD" type="CanvasLayer" parent="Conde"]
+
+[node name="BarraVida" type="ProgressBar" parent="Conde/HUD"]
+margin_left = 20.0
+margin_top = 20.0
+margin_right = 24.0
+margin_bottom = 34.0
+rect_min_size = Vector2( 300, 20 )
+custom_styles/fg = SubResource( 9 )
+custom_styles/bg = SubResource( 10 )
+value = 100.0
 
 [node name="Chao" parent="." instance=ExtResource( 2 )]
 
@@ -75,6 +108,24 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 455, -2, 0 )
 
 [node name="Chao15" parent="." instance=ExtResource( 2 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 490, 0, 0 )
+
+[node name="Alho" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 105, 1.5, 0 )
+
+[node name="Alho2" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 175, 1.5, 0 )
+
+[node name="Alho3" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 245, 1.5, 0 )
+
+[node name="Alho4" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 315, 1.5, 0 )
+
+[node name="Alho5" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 350, 3.5, 0 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 11 )
 
 [connection signal="body_entered" from="ZonaLuz" to="Conde" method="_on_ZonaLuz_body_entered"]
 [connection signal="body_exited" from="ZonaLuz" to="Conde" method="_on_ZonaLuz_body_exited"]

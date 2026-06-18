@@ -55,7 +55,10 @@ func _physics_process(delta):
 		else:
 			# O 'stepify' limpa os números quebrados do float, mostrando só 1 casa decimal
 			print("CUIDADO! Energia: ", stepify(energia_vital, 0.1))
-
+# Se o Conde cair no abismo (passar de Y = -5), a fase recomeça do zero
+	if translation.y < -5.0:
+		var _reiniciar = get_tree().reload_current_scene()
+		
 func _on_ZonaLuz_body_entered(body):
 	if body.name == "Conde":
 		tomando_dano_de_luz = true

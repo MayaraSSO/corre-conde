@@ -1,28 +1,53 @@
 extends Camera
 
-# Carrega a posição original exata assim que o jogo começa
 onready var posicao_original = translation
 onready var fov_original = fov
 
-# Configuração da câmera cinematográfica (Afastamento da Batalha)
-var offset_batalha = Vector3(0, 3.5, 6.0) # Sobe 3.5 metros e afasta 6 metros para trás
-var fov_batalha = 85.0 # Abre a lente para dar mais visão lateral das estacas
+var offset_batalha = Vector3(0, 3.5, 6.0)
+var fov_batalha = 85.0
+
+# --- LÓGICA DE VARREDURA (PERCORRER OS BLOCOS) ---
+var estado = "apresentacao_ida"
+var cronometro = 3.5 # 3.5 segundos deslizando até o chefe
+
+# X=450 (Viaja pela fase inteira) | Y=10 (Altura para ver os buracos) | Z=15 (Afastamento lateral)
+var offset_fim_fase = Vector3(450.0, 10.0, 15.0) 
+var offset_inicio_fase = Vector3(0.0, 10.0, 15.0)
 
 func _process(delta):
-	# 1. Procura o Paladino subindo a hierarquia de pastas (Cam_Follow -> Conde -> Fase1 -> Paladino)
 	var paladino = get_node_or_null("../../Paladino")
 	var conde = get_parent()
+	var sol = get_node_or_null("../../ZonaLuz")
 	
-	if paladino:
-		# 2. Mede a distância vetorial exata até o chefe
-		var distancia = conde.translation.distance_to(paladino.translation)
+	# 1. A IDAA Câmera desliza por todos os blocos até o Paladino
+	if estado == "apresentacao_ida":
+		translation = translation.linear_interpolate(posicao_original + offset_fim_fase, 1.2 * delta)
+		cronometro -= delta
 		
-		# 3. Se estiver a 60 metros ou menos (início do combate e visão do radar)
-		if distancia <= 60.0:
-			# Puxa a câmera para trás e para cima de forma suave (lerp)
-			translation = translation.linear_interpolate(posicao_original + offset_batalha, 2.0 * delta)
-			fov = lerp(fov, fov_batalha, 2.0 * delta)
-		else:
-			# Se estiver longe, mantém a câmera focada na corrida de sobrevivência
-			translation = translation.linear_interpolate(posicao_original, 2.0 * delta)
-			fov = lerp(fov, fov_original, 2.0 * delta)
+		# Quando der 3.5s, ela engata a marcha à ré
+		if cronometro <= 0:
+			estado = "apresentacao_volta"
+			cronometro = 2.5 # 2.5 segundos para voltar rapidamente ao Conde
+			
+	# 2. A VOLTA: A Câmera recua deslizando de volta para o início
+	elif estado == "apresentacao_volta":
+		translation = translation.linear_interpolate(posicao_original + offset_inicio_fase, 2.0 * delta)
+		cronometro -= delta
+		
+		# Terminou de voltar? Libera o Conde e destrava o Tsunami!
+		if cronometro <= 0:
+			estado = "corrida"
+			if sol:
+				sol.perseguindo = true 
+				
+	# 3. A CORRIDA: Jogo normal e câmera da Batalha Final
+	elif estado == "corrida":
+		if paladino:
+			var distancia = conde.translation.distance_to(paladino.translation)
+			if distancia <= 60.0:
+				translation = translation.linear_interpolate(posicao_original + offset_batalha, 2.0 * delta)
+				fov = lerp(fov, fov_batalha, 2.0 * delta)
+			else:
+				# 3.0 * delta faz a câmera "pousar" macio nas costas do Conde ao iniciar
+				translation = translation.linear_interpolate(posicao_original, 3.0 * delta)
+				fov = lerp(fov, fov_original, 3.0 * delta)

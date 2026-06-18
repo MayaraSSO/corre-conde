@@ -11,6 +11,9 @@ var energia_vital = 100.0
 var tomando_dano_de_luz = false
 var dano_da_luz_por_segundo = 15.0
 
+# --- VARIÁVEIS DO ANEL ---
+var pedacos_coletados = 0
+var total_pedacos = 3
 
 func _physics_process(delta):
 	
@@ -66,3 +69,17 @@ func _on_ZonaLuz_body_entered(body):
 func _on_ZonaLuz_body_exited(body):
 	if body.name == "Conde":
 		tomando_dano_de_luz = false
+
+func pegar_pedaco_anel():
+	pedacos_coletados += 1
+	var pedacos_restantes = total_pedacos - pedacos_coletados
+	
+	# Atualiza o texto na tela baseado na matemática exata
+	if pedacos_restantes > 1:
+		$HUD/TextoAnel.text = "FALTAM " + str(pedacos_restantes) + " PEDAÇOS DO ANEL"
+	elif pedacos_restantes == 1:
+		$HUD/TextoAnel.text = "FALTA 1 PEDAÇO DO ANEL"
+	else:
+		$HUD/TextoAnel.text = "ANEL COMPLETO!"
+		print("VITÓRIA: O Conde juntou todos os pedaços!")
+		# Aqui poderemos chamar a tela de vitória no futuro!

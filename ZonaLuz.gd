@@ -1,11 +1,8 @@
 extends Area
 
-export var velocidade_perseguicao = 2.5
+export var velocidade_perseguicao = 5.0
 var perseguindo = false
-var tempo_espera = 8.0
-
-# Variável para rastrear se o Conde está dentro da luz
-var conde_sendo_queimado = null
+var tempo_espera = 2.0
 
 func _process(delta):
 	# 1. Movimento da Parede de Luz
@@ -15,17 +12,26 @@ func _process(delta):
 		else:
 			translation.x += velocidade_perseguicao * delta
 			
-	# 2. Sistema de Dano Contínuo
-	if conde_sendo_queimado != null:
-		# Tira 20 pontos de vida POR SEGUNDO
-		conde_sendo_queimado.energia_vital -= 20.0 * delta 
-		conde_sendo_queimado.get_node("HUD/BarraVida").value = conde_sendo_queimado.energia_vital
-func _on_ZonaLuz_body_entered(body):
-	if body.name == "Conde":
-		print("ENTROU NA LUZ: Começou a tomar dano!")
-		conde_sendo_queimado = body
+	# 2. Sistema de Dano Contínuo da Luz Solar
+	# Todo ponto à esquerda do limite da onda de luz está ensolarado
+	var conde = get_parent().get_node_or_null("Conde")
+	if conde != null:
+		var limite_sol = translation.x # A frente física e visual está alinhada com a posição X
+		if conde.translation.x < limite_sol:
+			# O Conde está na luz solar!
+			# Tiramos 25.0 de vida por segundo
+			conde.energia_vital -= 25.0 * delta
+			
+			var hud_barra = conde.get_node_or_null("HUD/BarraVida")
+			if hud_barra != null:
+				hud_barra.value = conde.energia_vital
+				
+			# Se a energia acabou, manda para o Game Over de Sol
+			if conde.energia_vital <= 0:
+				conde.energia_vital = 0
+				var arquivo = File.new()
+				var _erro = arquivo.open("user://motivo_morte.txt", File.WRITE)
+				arquivo.store_string("sol")
+				arquivo.close()
+				var _recarregar = get_tree().change_scene("res://GameOver.tscn")
 
-func _on_ZonaLuz_body_exited(body):
-	if body.name == "Conde":
-		print("SAIU DA LUZ: Dano parou!")
-		conde_sendo_queimado = null

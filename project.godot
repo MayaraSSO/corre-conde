@@ -12,6 +12,10 @@ config_version=4
 
 run/main_scene="res://MenuPrincipal.tscn"
 
+[autoload]
+
+DadosJogo="*res://DadosJogo.gd"
+
 [rendering]
 
 quality/driver/driver_name="GLES2"

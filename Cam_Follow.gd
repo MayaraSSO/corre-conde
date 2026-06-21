@@ -8,7 +8,7 @@ var fov_batalha = 85.0
 
 # --- LÓGICA DE VARREDURA (PERCORRER OS BLOCOS) ---
 var estado = "apresentacao_ida"
-var cronometro = 3.5 # 3.5 segundos deslizando até o chefe
+var cronometro = 2.5 # 2.5 segundos deslizando até o chefe
 
 # X=450 (Viaja pela fase inteira) | Y=10 (Altura para ver os buracos) | Z=15 (Afastamento lateral)
 var offset_fim_fase = Vector3(450.0, 10.0, 15.0) 
@@ -27,7 +27,7 @@ func _process(delta):
 		# Quando der 3.5s, ela engata a marcha à ré
 		if cronometro <= 0:
 			estado = "apresentacao_volta"
-			cronometro = 2.5 # 2.5 segundos para voltar rapidamente ao Conde
+			cronometro = 1.5 # 1.5 segundos para voltar rapidamente ao Conde
 			
 	# 2. A VOLTA: A Câmera recua deslizando de volta para o início
 	elif estado == "apresentacao_volta":

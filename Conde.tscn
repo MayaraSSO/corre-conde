@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Conde.gd" type="Script" id=1]
-[ext_resource path="res://Imagens/Conde_Parado_0.png" type="Texture" id=3]
+[ext_resource path="res://Imagens/Conde_Parado_Sheet.png" type="Texture" id=3]
 
 [sub_resource type="CapsuleMesh" id=1]
 

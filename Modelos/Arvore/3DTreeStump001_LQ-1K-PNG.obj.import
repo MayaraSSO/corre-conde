@@ -1,0 +1,20 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/3DTreeStump001_LQ-1K-PNG.obj-e33ae7794145cd10213294a329b2f525.mesh"
+
+[deps]
+
+files=[ "res://.import/3DTreeStump001_LQ-1K-PNG.obj-e33ae7794145cd10213294a329b2f525.mesh" ]
+
+source_file="res://Modelos/Arvore/3DTreeStump001_LQ-1K-PNG.obj"
+dest_files=[ "res://.import/3DTreeStump001_LQ-1K-PNG.obj-e33ae7794145cd10213294a329b2f525.mesh", "res://.import/3DTreeStump001_LQ-1K-PNG.obj-e33ae7794145cd10213294a329b2f525.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+octahedral_compression=true
+optimize_mesh_flags=4286

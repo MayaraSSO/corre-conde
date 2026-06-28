@@ -1,0 +1,191 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://Conde.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Chao.tscn" type="PackedScene" id=2]
+[ext_resource path="res://ZonaLuz.gd" type="Script" id=3]
+[ext_resource path="res://Crucifixo.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Lobisomem.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Cam_Follow.gd" type="Script" id=6]
+[ext_resource path="res://MenuPause.tscn" type="PackedScene" id=7]
+[ext_resource path="res://PoMagico.tscn" type="PackedScene" id=8]
+[ext_resource path="res://ArvoreProtetora.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Fase2.gd" type="Script" id=10]
+[ext_resource path="res://Imagens/NightSkyHDRI003_1K_HDR.exr" type="Texture" id=11]
+[ext_resource path="res://ZonaLuzShader.shader" type="Shader" id=12]
+[ext_resource path="res://Imagens/DaySkyHDRI001B_1K_TONEMAPPED.jpg" type="Texture" id=13]
+[ext_resource path="res://CeuDiaShader.shader" type="Shader" id=14]
+
+[sub_resource type="BoxShape" id=17]
+
+[sub_resource type="ShaderMaterial" id=16]
+shader = ExtResource( 12 )
+
+[sub_resource type="CubeMesh" id=15]
+material = SubResource( 16 )
+
+[sub_resource type="CapsuleShape" id=6]
+
+[sub_resource type="StyleBoxFlat" id=9]
+bg_color = Color( 0.901961, 0, 0, 1 )
+
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0.2, 0.2, 0.2, 1 )
+
+[sub_resource type="PanoramaSky" id=18]
+panorama = ExtResource( 11 )
+
+[sub_resource type="Environment" id=11]
+background_mode = 2
+background_sky = SubResource( 18 )
+ambient_light_color = Color( 0.4, 0.52, 0.45, 1 )
+ambient_light_sky_contribution = 0.6
+fog_enabled = true
+fog_color = Color( 0.015, 0.04, 0.02, 1 )
+fog_depth_begin = 12.0
+fog_depth_end = 40.0
+
+[sub_resource type="ShaderMaterial" id=19]
+shader = ExtResource( 14 )
+shader_param/textura_dia = ExtResource( 13 )
+
+[sub_resource type="QuadMesh" id=20]
+material = SubResource( 19 )
+
+[node name="Fase2" type="Spatial"]
+script = ExtResource( 10 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 11 )
+
+[node name="ZonaLuz" type="Area" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -15, 0, 0 )
+script = ExtResource( 3 )
+
+[node name="CollisionShape" type="CollisionShape" parent="ZonaLuz"]
+transform = Transform( 500, 0, 0, 0, 80, 0, 0, 0, 2, -500, 0, 0 )
+shape = SubResource( 17 )
+
+[node name="MeshInstance" type="MeshInstance" parent="ZonaLuz"]
+transform = Transform( 500, 0, 0, 0, 80, 0, 0, 0, 2, -500, 0, 0 )
+mesh = SubResource( 15 )
+
+[node name="FundoDia" type="MeshInstance" parent="ZonaLuz"]
+transform = Transform( 1000, 0, 0, 0, 100, 0, 0, 0, 1, -500, 20, -5 )
+mesh = SubResource( 20 )
+
+[node name="Conde" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0 )
+
+[node name="Cam_Follow" type="Camera" parent="Conde"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 12 )
+far = 1000.0
+script = ExtResource( 6 )
+
+[node name="CollisionShape2" type="CollisionShape" parent="Conde"]
+shape = SubResource( 6 )
+
+[node name="HUD" type="CanvasLayer" parent="Conde"]
+
+[node name="BarraVida" type="ProgressBar" parent="Conde/HUD"]
+margin_left = 20.0
+margin_top = 20.0
+margin_right = 320.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 300, 20 )
+custom_styles/fg = SubResource( 9 )
+custom_styles/bg = SubResource( 10 )
+value = 100.0
+
+[node name="TextoAnel" type="Label" parent="Conde/HUD"]
+margin_left = 20.0
+margin_top = 60.0
+margin_right = 320.0
+margin_bottom = 90.0
+text = "ANEL INCOMPLETO (FASE 2)"
+
+[node name="ArvoreProtetora" parent="." instance=ExtResource( 9 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0 )
+
+[node name="Chao1" parent="." instance=ExtResource( 2 )]
+
+[node name="Chao2" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 35, 0, 0 )
+
+[node name="Chao3" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 70, 0, 0 )
+
+[node name="Chao4" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 105, 0, 0 )
+
+[node name="Chao5" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 140, 0, 0 )
+
+[node name="Chao6" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 175, 0, 0 )
+
+[node name="Chao7" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 210, -2.5, 0 )
+
+[node name="Chao8" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 245, -2.5, 0 )
+
+[node name="Chao9" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 280, -2.5, 0 )
+
+[node name="Chao10" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 315, -2.5, 0 )
+
+[node name="Chao11" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 350, 0, 0 )
+
+[node name="Chao12" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 385, 0, 0 )
+
+[node name="Chao13" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 420, 0, 0 )
+
+[node name="Chao14" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 455, 0, 0 )
+
+[node name="Chao15" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 490, 0, 0 )
+
+[node name="Chao16" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 525, 0, 0 )
+
+[node name="Chao17" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 560, 0, 0 )
+
+[node name="Chao18" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 595, 0, 0 )
+
+[node name="Chao19" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 630, 0, 0 )
+
+[node name="Crucifixo1" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 110, 0, 0 )
+
+[node name="Crucifixo2" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 345, 0, 0 )
+
+[node name="Crucifixo3" parent="." instance=ExtResource( 4 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 410, 0, 0 )
+
+[node name="PoMagico1" parent="." instance=ExtResource( 8 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 210, 1.2, 0 )
+
+[node name="PoMagico2" parent="." instance=ExtResource( 8 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 240, 1.2, 0 )
+
+[node name="PoMagico3" parent="." instance=ExtResource( 8 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 270, 1.2, 0 )
+
+[node name="PoMagico4" parent="." instance=ExtResource( 8 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 300, 1.2, 0 )
+
+[node name="Lobisomem" parent="." instance=ExtResource( 5 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 550, 0.5, 0 )
+
+[node name="MenuPause" parent="." instance=ExtResource( 7 )]
+
+

@@ -10,6 +10,12 @@ func _physics_process(delta):
 func _on_Estaca_body_entered(body):
 	# Se a estaca encostar no personagem principal (Conde)
 	if body.name == "Conde":
+		if body.temporizador_parry > 0.0:
+			body.temporizador_parry = 0.0 # Consome o parry
+			print("PARRY! O Conde bloqueou a estaca com a Capa de Hipnose.")
+			queue_free()
+			return
+			
 		# Arranca 10 pontos da energia vital (10% do total)
 		body.energia_vital -= 10.0
 		

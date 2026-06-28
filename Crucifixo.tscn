@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Crucifixo.gd" type="Script" id=1]
+
+[sub_resource type="SpatialMaterial" id=1]
+flags_unshaded = true
+albedo_color = Color( 1, 0.843137, 0, 1 )
+
+[sub_resource type="CubeMesh" id=2]
+material = SubResource( 1 )
+size = Vector3( 1, 1, 1 )
+
+[sub_resource type="BoxShape" id=3]
+extents = Vector3( 0.6, 0.8, 0.4 )
+
+[node name="Crucifixo" type="Area"]
+script = ExtResource( 1 )
+
+[node name="HasteVertical" type="MeshInstance" parent="."]
+transform = Transform( 0.2, 0, 0, 0, 1.2, 0, 0, 0, 0.2, 0, 0.6, 0 )
+mesh = SubResource( 2 )
+
+[node name="HasteHorizontal" type="MeshInstance" parent="."]
+transform = Transform( 0.8, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.8, 0 )
+mesh = SubResource( 2 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0 )
+shape = SubResource( 3 )
+
+[connection signal="body_entered" from="." to="." method="_on_Crucifixo_body_entered"]

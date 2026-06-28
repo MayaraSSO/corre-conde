@@ -1,0 +1,6 @@
+Conde: mayf2      | Destino: DESPEDAÇADO PELO LOBISOMEM! | HP:  -5%
+Conde: may1       | Destino: VIROU CINZAS NO SOL!   | HP:   0%
+Conde: may2.2     | Destino: VITORIA DA FASE 2!     | HP: 100%
+Conde: may2.3     | Destino: VITORIA DA FASE 2!     | HP: 100%
+Conde: may2       | Destino: DESPEDAÇADO PELO LOBISOMEM! | HP: -10%
+Conde: may2.2     | Destino: VITORIA DA FASE 2!     | HP: 100%

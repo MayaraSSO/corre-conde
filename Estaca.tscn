@@ -18,7 +18,7 @@ material_override = SubResource( 1 )
 mesh = SubResource( 2 )
 
 [node name="CollisionShape" type="CollisionShape" parent="."]
-transform = Transform( 2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0 )
+transform = Transform( 2, 0, 0, 0, 0.8, 0, 0, 0, 0.8, 0, 0, 0 )
 shape = SubResource( 3 )
 
 [connection signal="body_entered" from="." to="." method="_on_Estaca_body_entered"]

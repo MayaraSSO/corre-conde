@@ -1,0 +1,55 @@
+[gd_scene load_steps=11 format=2]
+
+[ext_resource path="res://ArvoreProtetora.gd" type="Script" id=1]
+[ext_resource path="res://Modelos/Arvore/3DTreeStump001_LQ-1K-PNG.obj" type="ArrayMesh" id=2]
+[ext_resource path="res://Modelos/Arvore/3DTreeStump001_LQ-1K-PNG_Color.png" type="Texture" id=3]
+[ext_resource path="res://Modelos/Arvore/3DTreeStump001_LQ-1K-PNG_NormalGL.png" type="Texture" id=4]
+
+[sub_resource type="SpatialMaterial" id=8]
+albedo_texture = ExtResource( 3 )
+normal_enabled = true
+normal_scale = 1.0
+normal_texture = ExtResource( 4 )
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_color = Color( 0.0823529, 0.447059, 0.105882, 1 )
+
+[sub_resource type="CubeMesh" id=4]
+material = SubResource( 3 )
+
+[sub_resource type="SpatialMaterial" id=5]
+flags_transparent = true
+flags_unshaded = true
+albedo_color = Color( 0, 0, 0, 0.55 )
+
+[sub_resource type="QuadMesh" id=6]
+material = SubResource( 5 )
+size = Vector2( 1, 4 )
+
+[sub_resource type="BoxShape" id=7]
+extents = Vector3( 0.5, 4, 2 )
+
+[node name="ArvoreProtetora" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="Tronco" type="MeshInstance" parent="."]
+transform = Transform( 1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0 )
+material_override = SubResource( 8 )
+mesh = ExtResource( 2 )
+
+[node name="Copa" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0 )
+mesh = SubResource( 4 )
+
+[node name="SombraVisual" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.01, 0 )
+mesh = SubResource( 6 )
+
+[node name="AreaSombra" type="Area" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="AreaSombra"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0 )
+shape = SubResource( 7 )
+
+[connection signal="body_entered" from="AreaSombra" to="." method="_on_AreaSombra_body_entered"]
+[connection signal="body_exited" from="AreaSombra" to="." method="_on_AreaSombra_body_exited"]

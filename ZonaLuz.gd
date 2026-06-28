@@ -14,24 +14,22 @@ func _process(delta):
 			
 	# 2. Sistema de Dano Contínuo da Luz Solar
 	# Todo ponto à esquerda do limite da onda de luz está ensolarado
-	var conde = get_parent().get_node_or_null("Conde")
-	if conde != null:
-		var limite_sol = translation.x # A frente física e visual está alinhada com a posição X
-		if conde.translation.x < limite_sol:
-			# O Conde está na luz solar!
-			# Tiramos 25.0 de vida por segundo
-			conde.energia_vital -= 25.0 * delta
-			
-			var hud_barra = conde.get_node_or_null("HUD/BarraVida")
-			if hud_barra != null:
-				hud_barra.value = conde.energia_vital
+	if perseguindo:
+		var conde = get_parent().get_node_or_null("Conde")
+		if conde != null:
+			var limite_sol = translation.x # A frente física e visual está alinhada com a posição X
+			if conde.translation.x < limite_sol and not conde.imune_ao_sol:
+				# O Conde está na luz solar!
+				# Tiramos 25.0 de vida por segundo e ativamos a flag de animação solar
+				conde.energia_vital -= 25.0 * delta
+				conde.sofrendo_dano_sol = true
 				
-			# Se a energia acabou, manda para o Game Over de Sol
-			if conde.energia_vital <= 0:
-				conde.energia_vital = 0
-				var arquivo = File.new()
-				var _erro = arquivo.open("user://motivo_morte.txt", File.WRITE)
-				arquivo.store_string("sol")
-				arquivo.close()
-				var _recarregar = get_tree().change_scene("res://GameOver.tscn")
+				var hud_barra = conde.get_node_or_null("HUD/BarraVida")
+				if hud_barra != null:
+					hud_barra.value = conde.energia_vital
+					
+				# Se a energia acabou, chama o morrer do conde
+				if conde.energia_vital <= 0:
+					conde.energia_vital = 0
+					conde.morrer("sol")
 

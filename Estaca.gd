@@ -2,6 +2,7 @@ extends Area
 
 # Velocidade agressiva do tiro da balestra
 var velocidade_tiro = 30.0
+export var dano_estaca = 10.0
 
 func _physics_process(delta):
 	# A estaca viaja como um míssil para a ESQUERDA (em direção contrária à corrida)
@@ -16,11 +17,14 @@ func _on_Estaca_body_entered(body):
 			queue_free()
 			return
 			
-		# Arranca 10 pontos da energia vital (10% do total)
-		body.energia_vital -= 10.0
+		# Arranca o dano parametrizado da energia vital
+		body.ultimo_dano_recebido = "paladino"
+		body.energia_vital -= dano_estaca
 		
 		# Atualiza a barra vermelha na tela na mesma hora
-		body.get_node("HUD/BarraVida").value = body.energia_vital
+		var hud_barra = body.get_node_or_null("HUD/BarraVida")
+		if hud_barra != null:
+			hud_barra.value = body.energia_vital
 		
 		print("DANO: O Conde foi atingido por uma estaca! -10 Energia.")
 		

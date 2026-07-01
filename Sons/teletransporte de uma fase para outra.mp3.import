@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/teletransporte de uma fase para outra.mp3-3ec7f0c5e47581507b503ea9c39dcc91.mp3str"
+
+[deps]
+
+source_file="res://Sons/teletransporte de uma fase para outra.mp3"
+dest_files=[ "res://.import/teletransporte de uma fase para outra.mp3-3ec7f0c5e47581507b503ea9c39dcc91.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

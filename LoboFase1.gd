@@ -5,12 +5,13 @@ extends KinematicBody
 # Usa sprites 2D animados via Sprite3D
 # ===========================================================================
 
-var saude = 2  # Morre com 2 golpes de espada (fase 1 = fácil)
+export var saude = 2  # Configurável por fase (Fase1=2, Fase2=3)
+export var velocidade_perseguicao = 6.0  # Configurável (Fase1=6.0, Fase2=7.0)
+export var dano_ao_conde = 10.0  # Configurável (Fase1=10, Fase2=12)
 var morto = false
 var levou_dano = false
 var tempo_dano = 0.0
 var tempo_morte = 0.0
-var velocidade_perseguicao = 6.0
 var gravidade = 35.0
 var velocidade_y = 0.0
 var distancia_ataque = 3.0
@@ -18,7 +19,10 @@ var atacando = false
 var tempo_ataque = 0.0
 var cooldown_ataque = 1.5
 var timer_cooldown = 0.0
-var dano_ao_conde = 10.0
+
+# --- SONS DO LOBO ---
+var som_lobo_res = preload("res://Sons/Lobo  Lobisomem.mp3")
+var player_lobo : AudioStreamPlayer
 
 # Temporizadores e flags para a IA de evitar buracos
 var tempo_fuga_buraco = 0.0
@@ -100,31 +104,116 @@ func _ready():
 		print("[LoboFase1] ERRO: SpriteLobo não encontrado!")
 	
 	print("[LoboFase1] Lobo posicionado em X=", translation.x, " Y=", translation.y, " Z=", translation.z)
+	
+	# --- INICIALIZAÇÃO DO PLAYER DE ÁUDIO ---
+	player_lobo = AudioStreamPlayer.new()
+	if som_lobo_res != null:
+		som_lobo_res.loop = false # Garante que o som de ataque/rosnado não fique em loop infinito
+	player_lobo.stream = som_lobo_res
+	add_child(player_lobo)
+
+var _blocos_cache = null
+
+func _is_custom_level() -> bool:
+	var pai = get_parent()
+	return pai != null and (pai.name.begins_with("LevelLoader") or pai.has_method("carregar_fase"))
+
+func _obter_blocos_custom():
+	if _blocos_cache != null:
+		return _blocos_cache
+	
+	var blocos = []
+	var pai = get_parent()
+	if pai != null and "dados_fase" in pai and "blocos" in pai.dados_fase:
+		for bloco in pai.dados_fase.blocos:
+			var px = (bloco.x / pai.BLOCO_PX) * pai.ESCALA
+			var py = ((pai._max_y_px - bloco.y) / pai.BLOCO_PX) * pai.ESCALA
+			var y_surf = py + (pai.ESCALA / 2.0)
+			blocos.append([px, y_surf])
+	_blocos_cache = blocos
+	return blocos
+
+func _obter_altura_chao_custom(x_pos) -> float:
+	var blocos = _obter_blocos_custom()
+	if blocos.size() == 0:
+		return 0.0
+		
+	var pai = get_parent()
+	var melhor_y = -999.0
+	# Tolerância ampliada de 0.8 para o robô apoiar firmemente mesmo nas bordas
+	var meia_largura = (pai.ESCALA / 2.0) + 0.8
+	for bloco in blocos:
+		var px = bloco[0]
+		if abs(x_pos - px) <= meia_largura:
+			var y_surf = bloco[1]
+			# Ignora blocos que estão muito acima do lobo (como o teto)
+			if y_surf <= translation.y + 2.0:
+				if y_surf > melhor_y:
+					melhor_y = y_surf
+	if melhor_y > -900.0:
+		return melhor_y
+	return 0.0
+
+func _esta_sobre_chao_custom(x_pos) -> bool:
+	var blocos = _obter_blocos_custom()
+	if blocos.size() == 0:
+		return false
+	var pai = get_parent()
+	# Tolerância de 0.2 para patrulha de bordas
+	var meia_largura = (pai.ESCALA / 2.0) + 0.2
+	for bloco in blocos:
+		var px = bloco[0]
+		if abs(x_pos - px) <= meia_largura:
+			var y_surf = bloco[1]
+			# Ignora blocos que estão muito acima do lobo (como o teto)
+			if y_surf <= translation.y + 2.0:
+				return true
+	return false
 
 func _esta_sobre_chao(x_pos):
-	# O ciclo de blocos de chão se repete a cada 35 metros, de X=0 a X=500
+	if _is_custom_level():
+		return _esta_sobre_chao_custom(x_pos)
+		
+	# O ciclo de blocos de chão se repete a cada 35 metros
 	var mod = fmod(x_pos + 17.5, 35.0)
 	if mod < 0.0:
 		mod += 35.0
-	
 	# Cada bloco de chão tem 30 metros de largura, centralizado no ciclo.
 	# Portanto, se estiver entre 2.5 e 32.5, há chão sob o lobo.
 	return mod >= 2.5 and mod <= 32.5
 
 func _obter_altura_chao_em(x_pos):
-	# Retorna a altura Y correspondente a cada bloco de chão da Fase 1
-	if x_pos >= 332.5 and x_pos < 367.5:
-		return 2.0  # Chao11
-	elif x_pos >= 367.5 and x_pos < 402.5:
-		return 4.0  # Chao12
-	elif x_pos >= 402.5 and x_pos < 437.5:
-		return 2.0  # Chao13
-	elif x_pos >= 437.5 and x_pos < 472.5:
-		return -2.0 # Chao14
-	elif x_pos >= 472.5:
-		return 0.0  # Chao15
+	if _is_custom_level():
+		return _obter_altura_chao_custom(x_pos)
+		
+	if DadosJogo.fase_atual == 2:
+		# Fase 2: seção rebaixada de X=192.5 a X=332.5
+		if x_pos >= 192.5 and x_pos < 332.5:
+			return -2.5
+		else:
+			return 0.0
+	elif DadosJogo.fase_atual == 3:
+		# Fase 3: Cemitério / Catacumbas
+		if x_pos >= 160.0 and x_pos < 295.0:
+			return 2.0
+		elif x_pos >= 370.0 and x_pos < 470.0:
+			return -2.5
+		else:
+			return 0.0
 	else:
-		return 0.0  # Chaos 1 a 10
+		# Fase 1: layout original
+		if x_pos >= 332.5 and x_pos < 367.5:
+			return 2.0  # Chao11
+		elif x_pos >= 367.5 and x_pos < 402.5:
+			return 4.0  # Chao12
+		elif x_pos >= 402.5 and x_pos < 437.5:
+			return 2.0  # Chao13
+		elif x_pos >= 437.5 and x_pos < 472.5:
+			return -2.0 # Chao14
+		elif x_pos >= 472.5:
+			return 0.0  # Chao15
+		else:
+			return 0.0  # Chaos 1 a 10
 
 func _mover_e_travar(movimento):
 	var novo_mov = move_and_slide(movimento, Vector3.UP)
@@ -178,7 +267,7 @@ func _physics_process(delta):
 		tempo_fuga_buraco -= delta
 	
 	# Busca o Conde
-	var conde = get_parent().get_node_or_null("Conde")
+	var conde = get_tree().current_scene.get_node_or_null("Conde")
 	if conde == null or conde.esta_morto:
 		estado_atual = "idle"
 		_atualizar_sprite(delta)
@@ -187,6 +276,10 @@ func _physics_process(delta):
 	
 	var dir = sign(conde.translation.x - translation.x)
 	var dist = abs(translation.x - conde.translation.x)
+	
+	# Silencia o lobo se ele estiver muito longe (fora da tela)
+	if dist > 25.0 and player_lobo != null and player_lobo.playing:
+		player_lobo.stop()
 	
 	if atacando:
 		tempo_ataque += delta
@@ -235,6 +328,9 @@ func _physics_process(delta):
 	_atualizar_sprite(delta)
 
 func _atacar_conde(conde):
+	# Toca o som de rosnado/ataque do lobo
+	if player_lobo != null and not player_lobo.playing:
+		player_lobo.play()
 	if conde.temporizador_parry > 0.0:
 		conde.temporizador_parry = 0.0 # Consome o parry
 		print("PARRY! O Conde bloqueou o ataque do lobo com a capa.")
@@ -246,6 +342,7 @@ func _atacar_conde(conde):
 		return
 		
 	# Aplica dano ao Conde
+	conde.ultimo_dano_recebido = "lobo"
 	conde.energia_vital -= dano_ao_conde
 	conde.tempo_exibir_dano = 0.35
 	
@@ -285,7 +382,7 @@ func receber_dano_espada():
 		tempo_animacao = 0.0
 		estado_anterior = ""
 		# Repele o lobo para trás
-		var conde = get_parent().get_node_or_null("Conde")
+		var conde = get_tree().current_scene.get_node_or_null("Conde")
 		if conde != null:
 			var dir = sign(translation.x - conde.translation.x)
 			translation.x += dir * 5.0

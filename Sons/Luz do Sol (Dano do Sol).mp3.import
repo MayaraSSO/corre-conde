@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Luz do Sol (Dano do Sol).mp3-94608da2af5097d087fbd5a5644aefb9.mp3str"
+
+[deps]
+
+source_file="res://Sons/Luz do Sol (Dano do Sol).mp3"
+dest_files=[ "res://.import/Luz do Sol (Dano do Sol).mp3-94608da2af5097d087fbd5a5644aefb9.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

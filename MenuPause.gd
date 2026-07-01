@@ -6,6 +6,12 @@ func _ready():
 	$BotaoContinuar.visible = false
 	$BotaoMusica.visible = false
 	$BotaoMenu.visible = false
+	$BotaoTutorial.visible = false
+	
+	if DadosJogo.tutorial_ativo:
+		$BotaoTutorial.text = "TUTORIAL: LIGADO"
+	else:
+		$BotaoTutorial.text = "TUTORIAL: DESLIGADO"
 
 func _input(event):
 	# Se apertar o botão ESC (ui_cancel) do teclado
@@ -19,6 +25,7 @@ func _input(event):
 		$BotaoContinuar.visible = novo_estado_pause
 		$BotaoMusica.visible = novo_estado_pause
 		$BotaoMenu.visible = novo_estado_pause
+		$BotaoTutorial.visible = novo_estado_pause
 
 func _on_BotaoContinuar_pressed():
 	# Tira o pause e esconde a tela
@@ -27,6 +34,7 @@ func _on_BotaoContinuar_pressed():
 	$BotaoContinuar.visible = false
 	$BotaoMusica.visible = false
 	$BotaoMenu.visible = false
+	$BotaoTutorial.visible = false
 
 func _on_BotaoMusica_pressed():
 	# Lógica para mutar/desmutar todo o áudio do jogo
@@ -44,4 +52,17 @@ func _on_BotaoMusica_pressed():
 func _on_BotaoMenu_pressed():
 	# IMPORTANTE: Despausa o motor do jogo antes de mudar de cena
 	get_tree().paused = false
-	var _voltar = get_tree().change_scene("res://MenuPrincipal.tscn")
+	if DadosJogo.modo_editor:
+		if DadosJogo.caminho_fase_custom == "user://editor_teste.lvl":
+			var _voltar = get_tree().change_scene("res://EditorFases.tscn")
+		else:
+			var _voltar = get_tree().change_scene("res://MenuFasesCustom.tscn")
+	else:
+		var _voltar = get_tree().change_scene("res://MenuPrincipal.tscn")
+
+func _on_BotaoTutorial_pressed():
+	DadosJogo.tutorial_ativo = not DadosJogo.tutorial_ativo
+	if DadosJogo.tutorial_ativo:
+		$BotaoTutorial.text = "TUTORIAL: LIGADO"
+	else:
+		$BotaoTutorial.text = "TUTORIAL: DESLIGADO"

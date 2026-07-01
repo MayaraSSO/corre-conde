@@ -21,18 +21,28 @@ func _ready():
 	print("MenuPrincipal: Inicializado com a capa estática do menu.")
 
 func _on_BotaoIniciar_pressed():
-	# Reseta os dados e carrega a Fase 1 original (com jogabilidade e arte nativa de alta qualidade)
+	# Reseta os dados globais para uma nova partida
 	DadosJogo.resetar_para_nova_partida()
-	var _mudar = get_tree().change_scene("res://Fase1.tscn")
+	
+	var caminho_cena = "res://Fase" + str(DadosJogo.fase_atual) + ".tscn"
+	print("MenuPrincipal: Iniciando na Fase ", DadosJogo.fase_atual, " -> ", caminho_cena)
+	var _mudar = get_tree().change_scene(caminho_cena)
 
 func _on_BotaoEditor_pressed():
 	# Abre o editor de fases integrado
 	DadosJogo.modo_editor = true
 	var _mudar = get_tree().change_scene("res://EditorFases.tscn")
 
+func _on_BotaoFasesCustom_pressed():
+	var _mudar = get_tree().change_scene("res://MenuFasesCustom.tscn")
+
 func _on_BotaoFaseOriginal_pressed():
 	# Redirecionado para o jogo normal
 	_on_BotaoIniciar_pressed()
+
+func _on_BotaoRanking_pressed():
+	# Abre a tela de ranking
+	var _mudar = get_tree().change_scene("res://TelaRanking.tscn")
 
 func _on_BotaoSair_pressed():
 	get_tree().quit()

@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Disparo de Estaca.wav-7591ee530afdb7a7e2bff8999dee8d39.sample"
+
+[deps]
+
+source_file="res://Sons/Disparo de Estaca.wav"
+dest_files=[ "res://.import/Disparo de Estaca.wav-7591ee530afdb7a7e2bff8999dee8d39.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

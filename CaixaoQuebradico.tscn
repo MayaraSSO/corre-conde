@@ -1,0 +1,168 @@
+[gd_scene load_steps=20 format=2]
+
+[ext_resource path="res://CaixaoQuebradico.gd" type="Script" id=1]
+[ext_resource path="res://Imagens/Bark012_1K-JPG_Color.jpg" type="Texture" id=2]
+[ext_resource path="res://Imagens/Bark012_1K-JPG_NormalGL.jpg" type="Texture" id=3]
+
+; Material de madeira envelhecida (corpo)
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0.3, 0.17, 0.08, 1.0 )
+albedo_texture = ExtResource( 2 )
+normal_enabled = true
+normal_texture = ExtResource( 3 )
+uv1_scale = Vector3( 0.3, 0.3, 0.3 )
+uv1_triplanar = true
+
+; Material da tampa (tom mais claro)
+[sub_resource type="SpatialMaterial" id=2]
+albedo_color = Color( 0.38, 0.22, 0.1, 1.0 )
+albedo_texture = ExtResource( 2 )
+normal_enabled = true
+normal_texture = ExtResource( 3 )
+uv1_scale = Vector3( 0.25, 0.25, 0.25 )
+uv1_triplanar = true
+
+; Material dourado fosco (cruz)
+[sub_resource type="SpatialMaterial" id=3]
+flags_unshaded = true
+albedo_color = Color( 0.55, 0.4, 0.12, 1.0 )
+metallic = 0.5
+roughness = 0.6
+
+; Material de metal escuro (alças)
+[sub_resource type="SpatialMaterial" id=4]
+flags_unshaded = true
+albedo_color = Color( 0.2, 0.15, 0.08, 1.0 )
+metallic = 0.7
+roughness = 0.7
+
+; ===== CORPO: 3 camadas sobrepostas (sem costuras) =====
+; Camada 1: Base comprida e estreita (cobre o comprimento inteiro do caixão)
+[sub_resource type="CubeMesh" id=5]
+material = SubResource( 1 )
+size = Vector3( 6.0, 2.0, 1.4 )
+
+; Camada 2: Média (70% do comprimento, mais larga)
+[sub_resource type="CubeMesh" id=6]
+material = SubResource( 1 )
+size = Vector3( 4.2, 2.0, 2.2 )
+
+; Camada 3: Ombros (parte mais larga do caixão, no centro)
+[sub_resource type="CubeMesh" id=7]
+material = SubResource( 1 )
+size = Vector3( 2.6, 2.0, 3.0 )
+
+; ===== TAMPA: 3 camadas sobrepostas acompanhando o corpo =====
+; Tampa base (comprida e estreita)
+[sub_resource type="CubeMesh" id=8]
+material = SubResource( 2 )
+size = Vector3( 6.2, 0.25, 1.5 )
+
+; Tampa média
+[sub_resource type="CubeMesh" id=9]
+material = SubResource( 2 )
+size = Vector3( 4.4, 0.25, 2.3 )
+
+; Tampa ombros (mais larga)
+[sub_resource type="CubeMesh" id=10]
+material = SubResource( 2 )
+size = Vector3( 2.8, 0.25, 3.1 )
+
+; ===== DETALHES =====
+; Cruz - braço horizontal
+[sub_resource type="CubeMesh" id=11]
+material = SubResource( 3 )
+size = Vector3( 1.6, 0.08, 0.22 )
+
+; Cruz - braço vertical
+[sub_resource type="CubeMesh" id=12]
+material = SubResource( 3 )
+size = Vector3( 0.22, 0.08, 0.9 )
+
+; Alça lateral
+[sub_resource type="CubeMesh" id=13]
+material = SubResource( 4 )
+size = Vector3( 0.7, 0.12, 0.1 )
+
+; Colisor físico
+[sub_resource type="BoxShape" id=14]
+extents = Vector3( 3.2, 1.0, 1.6 )
+
+; Colisor de detecção (pisada)
+[sub_resource type="BoxShape" id=15]
+extents = Vector3( 2.8, 0.3, 1.3 )
+
+; =============================================
+; ÁRVORE DE NODOS
+; =============================================
+
+[node name="CaixaoQuebradico" type="StaticBody"]
+script = ExtResource( 1 )
+
+; Nó pai visual (para tremor). Centro do corpo em Y=-1 (corpo vai de Y=-2 a Y=0)
+[node name="MeshBase" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+
+; ===== CORPO: 3 camadas sobrepostas centradas =====
+; As camadas se sobrepõem no centro, criando a silhueta hexagonal
+; sem costuras visíveis. Deslocamento em X cria a assimetria clássica
+; (ombros mais perto da cabeça, pés se alongam).
+
+; Camada 1 - Base: comprimento total, estreita
+[node name="CorpoBase" type="MeshInstance" parent="MeshBase"]
+mesh = SubResource( 5 )
+
+; Camada 2 - Média: cobre 70% do centro, mais larga
+[node name="CorpoMedio" type="MeshInstance" parent="MeshBase"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0, 0 )
+mesh = SubResource( 6 )
+
+; Camada 3 - Ombros: região mais larga do caixão
+[node name="CorpoLargo" type="MeshInstance" parent="MeshBase"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0, 0 )
+mesh = SubResource( 7 )
+
+; ===== TAMPA: 3 camadas sobrepostas (logo acima do corpo) =====
+; Tampa base
+[node name="TampaBase" type="MeshInstance" parent="MeshBase"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.12, 0 )
+mesh = SubResource( 8 )
+
+; Tampa média
+[node name="TampaMedio" type="MeshInstance" parent="MeshBase"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 1.12, 0 )
+mesh = SubResource( 9 )
+
+; Tampa ombros (larga)
+[node name="TampaLargo" type="MeshInstance" parent="MeshBase"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 1.12, 0 )
+mesh = SubResource( 10 )
+
+; ===== CRUZ ORNAMENTAL =====
+[node name="CruzH" type="MeshInstance" parent="MeshBase"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.3, 0 )
+mesh = SubResource( 11 )
+
+[node name="CruzV" type="MeshInstance" parent="MeshBase"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.3, 0 )
+mesh = SubResource( 12 )
+
+; ===== ALÇAS (2 laterais visíveis) =====
+[node name="AlcaFrente" type="MeshInstance" parent="MeshBase"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.2, 1.55 )
+mesh = SubResource( 13 )
+
+[node name="AlcaTras" type="MeshInstance" parent="MeshBase"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.2, -1.55 )
+mesh = SubResource( 13 )
+
+; ===== COLISORES =====
+[node name="CollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0 )
+shape = SubResource( 14 )
+
+[node name="AreaDetecao" type="Area" parent="."]
+
+[node name="CollisionShape" type="CollisionShape" parent="AreaDetecao"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0 )
+shape = SubResource( 15 )

@@ -42,6 +42,10 @@ func _process(delta):
 		
 		if cronometro <= 0:
 			estado = "corrida"
+			# Ativa o cronômetro quando o jogador ganha controle
+			if not DadosJogo.cronometro_ativo:
+				DadosJogo.cronometro_ativo = true
+				print("[Cam_Follow] Cronômetro ativado!")
 			if sol:
 				sol.perseguindo = true 
 				

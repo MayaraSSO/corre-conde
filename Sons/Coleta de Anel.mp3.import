@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Coleta de Anel.mp3-6b3e7a7727ccdac4fce13e9ea9e36343.mp3str"
+
+[deps]
+
+source_file="res://Sons/Coleta de Anel.mp3"
+dest_files=[ "res://.import/Coleta de Anel.mp3-6b3e7a7727ccdac4fce13e9ea9e36343.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

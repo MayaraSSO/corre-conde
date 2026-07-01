@@ -6,8 +6,10 @@ extends Spatial
 # CADA bloco gera um StaticBody com colisão para o jogador poder andar.
 # ===========================================================================
 
-const BLOCO_PX = 60.0
-const ESCALA = 4.0  # 1 bloco = 4 unidades Godot (para compatibilidade física)
+var BLOCO_PX = 60.0
+var ESCALA = 4.0  # 1 bloco = 4 unidades Godot (para compatibilidade física)
+
+var arvore_cena = preload("res://ArvoreProtetora.tscn")
 
 # Altura máxima do mapa (calculada na leitura) — usada para inverter Y
 var _max_y_px = 0.0
@@ -254,6 +256,37 @@ func _construir_saida():
 	add_child(mesh)
 
 # -----------------------------------------------------------------------
+# Utilitário: encontra a superfície do bloco abaixo de uma posição (X,Y)
+# -----------------------------------------------------------------------
+func _encontrar_superficie_abaixo(pos_x: float, pos_y: float) -> float:
+	"""Busca entre os blocos carregados a superfície do bloco mais alto
+	que está ABAIXO ou no nível da posição Y do objeto.
+	Isso evita pegar o teto quando o objeto está no chão."""
+	var melhor_y = -999.0
+	var meia_largura = ESCALA / 2.0 + 0.5  # Tolerância para bordas
+	for bloco in dados_fase.blocos:
+		var bx = (bloco.x / BLOCO_PX) * ESCALA
+		if abs(pos_x - bx) <= meia_largura:
+			var by = ((_max_y_px - bloco.y) / BLOCO_PX) * ESCALA
+			var y_superficie = by + ESCALA / 2.0
+			# Só considera blocos cuja superfície está abaixo ou no nível do objeto
+			# (margem de ESCALA para tolerar o caso em que o objeto está na mesma célula)
+			if y_superficie <= pos_y + ESCALA:
+				if y_superficie > melhor_y:
+					melhor_y = y_superficie
+	if melhor_y > -900.0:
+		return melhor_y
+	return 0.0  # Fallback
+
+func _contar_objetos_tipo(tipo: String) -> int:
+	"""Conta quantos objetos de um determinado tipo existem na fase."""
+	var contagem = 0
+	for obj in dados_fase.objetos:
+		if obj.tipo == tipo:
+			contagem += 1
+	return contagem
+
+# -----------------------------------------------------------------------
 # Objetos dinâmicos (lâmpadas, caixas, lasers)
 # -----------------------------------------------------------------------
 func _construir_objetos():
@@ -275,6 +308,16 @@ func _construir_objetos():
 				_criar_lobo(pos)
 			"cruz":
 				_criar_cruz(pos)
+			"paladino":
+				_criar_paladino(pos)
+			"caixao":
+				_criar_caixao_quebradico(pos)
+			"po_magico":
+				_criar_po_magico(pos)
+			"pedaco_anel":
+				_criar_pedaco_anel(pos)
+			"portal":
+				_criar_portal_obj(pos)
 			_:
 				print("[LevelLoader] Objeto desconhecido: '%s'" % obj.tipo)
 
@@ -282,8 +325,10 @@ func _criar_lobo(pos: Vector3):
 	var lobo_cena = load("res://LoboFase1.tscn")
 	if lobo_cena != null:
 		var lobo = lobo_cena.instance()
-		# Ajusta para centralizar no bloco do grid
-		lobo.translation = pos + Vector3(ESCALA / 2.0, (ESCALA / 2.0) + 0.1, 0.0)
+		var centro_x = pos.x + ESCALA / 2.0
+		# Encontra a superfície do bloco abaixo do objeto para apoiar o lobo
+		var y_superficie = _encontrar_superficie_abaixo(centro_x, pos.y)
+		lobo.translation = Vector3(centro_x, y_superficie + 0.3, 0.0)
 		add_child(lobo)
 		print("[LevelLoader] Lobo instanciado em fase customizada em: ", lobo.translation)
 
@@ -291,10 +336,77 @@ func _criar_cruz(pos: Vector3):
 	var cruz_cena = load("res://Crucifixo.tscn")
 	if cruz_cena != null:
 		var cruz = cruz_cena.instance()
-		# Ajusta para centralizar no bloco do grid (rente ao chão do bloco)
-		cruz.translation = pos + Vector3(ESCALA / 2.0, ESCALA / 2.0, 0.0)
+		var centro_x = pos.x + ESCALA / 2.0
+		var y_superficie = _encontrar_superficie_abaixo(centro_x, pos.y)
+		# Crucifixo fica apoiado na superfície do bloco (base física a -0.2)
+		cruz.translation = Vector3(centro_x, y_superficie + 0.2, 0.0)
 		add_child(cruz)
 		print("[LevelLoader] Crucifixo instanciado em fase customizada em: ", cruz.translation)
+
+func _criar_paladino(pos: Vector3):
+	var cena = load("res://Paladino.tscn")
+	if cena != null:
+		var inst = cena.instance()
+		var centro_x = pos.x + ESCALA / 2.0
+		var y_superficie = _encontrar_superficie_abaixo(centro_x, pos.y)
+		# Paladino fica apoiado na superfície do bloco (base física a -1.0)
+		inst.translation = Vector3(centro_x, y_superficie + 1.0, 0.0)
+		
+		# Conta pedaços de anel disponíveis na fase e ajusta pedacos_necessarios
+		var n_aneis = _contar_objetos_tipo("pedaco_anel")
+		if n_aneis <= 0:
+			# Se não há pedaços de anel, Paladino pode ser atacado diretamente
+			inst.pedacos_necessarios = 0
+		else:
+			# Requer todos os pedaços menos 1 (mínimo 1)
+			inst.pedacos_necessarios = max(1, n_aneis - 1)
+		print("[LevelLoader] Paladino instanciado em: ", inst.translation, " pedacos_necessarios=", inst.pedacos_necessarios)
+		
+		add_child(inst)
+
+func _criar_caixao_quebradico(pos: Vector3):
+	var cena = load("res://CaixaoQuebradico.tscn")
+	if cena != null:
+		var inst = cena.instance()
+		var centro_x = pos.x + ESCALA / 2.0
+		var y_superficie = _encontrar_superficie_abaixo(centro_x, pos.y)
+		# Caixão fica apoiado na superfície (serve como plataforma)
+		inst.translation = Vector3(centro_x, y_superficie, 0.0)
+		add_child(inst)
+		print("[LevelLoader] Caixao Quebradico instanciado em: ", inst.translation)
+
+func _criar_po_magico(pos: Vector3):
+	var cena = load("res://PoMagico.tscn")
+	if cena != null:
+		var inst = cena.instance()
+		var centro_x = pos.x + ESCALA / 2.0
+		var y_superficie = _encontrar_superficie_abaixo(centro_x, pos.y)
+		# Pó Mágico flutua 1.0 acima da superfície para ser coletável pelo Conde
+		inst.translation = Vector3(centro_x, y_superficie + 1.0, 0.0)
+		add_child(inst)
+		print("[LevelLoader] Po Magico instanciado em: ", inst.translation)
+
+func _criar_pedaco_anel(pos: Vector3):
+	var cena = load("res://PedacoAnel.tscn")
+	if cena != null:
+		var inst = cena.instance()
+		var centro_x = pos.x + ESCALA / 2.0
+		var y_superficie = _encontrar_superficie_abaixo(centro_x, pos.y)
+		# Pedaço de anel flutua 1.5 acima da superfície para ser visível e coletável
+		inst.translation = Vector3(centro_x, y_superficie + 1.5, 0.0)
+		add_child(inst)
+		print("[LevelLoader] Pedaco de Anel instanciado em: ", inst.translation)
+
+func _criar_portal_obj(pos: Vector3):
+	var cena = load("res://Portal.tscn")
+	if cena != null:
+		var inst = cena.instance()
+		var centro_x = pos.x + ESCALA / 2.0
+		var y_superficie = _encontrar_superficie_abaixo(centro_x, pos.y)
+		# Portal apoiado na superfície do bloco
+		inst.translation = Vector3(centro_x, y_superficie, 0.0)
+		add_child(inst)
+		print("[LevelLoader] Portal instanciado em: ", inst.translation)
 
 func _criar_luz(pos: Vector3, tipo: String):
 	var light = OmniLight.new()
@@ -379,29 +491,46 @@ func _material(tex_id: int) -> SpatialMaterial:
 		return _cache_materiais[tex_id]
 	
 	var mat = SpatialMaterial.new()
+	mat.uv1_triplanar = true
+	mat.uv1_scale = Vector3(0.25, 0.25, 0.25) # Escala para os cubos de tamanho 4.0
+	
+	var tex_color = null
+	var tex_normal = null
+	
 	match tex_id:
-		0:  mat.albedo_color = Color(0.12, 0.12, 0.12)
-		1:  mat.albedo_color = Color(0.35, 0.25, 0.15)
-		2:  mat.albedo_color = Color(0.45, 0.35, 0.20)
-		3:  mat.albedo_color = Color(0.55, 0.45, 0.30)
-		4:  mat.albedo_color = Color(0.08, 0.08, 0.08)
-		5:  mat.albedo_color = Color(0.65, 0.55, 0.35)
-		6:  mat.albedo_color = Color(0.40, 0.30, 0.20)
-		7:  mat.albedo_color = Color(0.30, 0.30, 0.35)
-		8:  mat.albedo_color = Color(0.50, 0.40, 0.30)
-		9:  mat.albedo_color = Color(0.60, 0.50, 0.35)
-		10: mat.albedo_color = Color(0.50, 0.45, 0.35)
-		11: mat.albedo_color = Color(0.45, 0.40, 0.30)
-		12: mat.albedo_color = Color(0.70, 0.55, 0.25)
-		13: mat.albedo_color = Color(0.65, 0.50, 0.20)
-		14: mat.albedo_color = Color(0.60, 0.45, 0.20)
-		15: mat.albedo_color = Color(0.80, 0.70, 0.50)
-		16: mat.albedo_color = Color(0.75, 0.65, 0.45)
-		17: mat.albedo_color = Color(0.40, 0.35, 0.25)
-		18: mat.albedo_color = Color(0.25, 0.20, 0.15)
-		19: mat.albedo_color = Color(0.55, 0.50, 0.40)
-		20: mat.albedo_color = Color(0.20, 0.18, 0.15)
-		_:  mat.albedo_color = Color(1.0, 0.0, 1.0)  # Magenta debug
+		0:  # Preto
+			mat.albedo_color = Color(0.12, 0.12, 0.12)
+		1, 2:  # Terra / Terra2
+			tex_color = load("res://Imagens/Grass001_1K-JPG_Color.jpg")
+			tex_normal = load("res://Imagens/Grass001_1K-JPG_NormalGL.jpg")
+			mat.albedo_color = Color(0.55, 0.45, 0.35)
+		3, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 19:  # Pedra, Parede, Tijolo, Ornamentos, Teto
+			tex_color = load("res://Imagens/PavingStones082_1K-JPG_Color.jpg")
+			tex_normal = load("res://Imagens/PavingStones082_1K-JPG_NormalGL.jpg")
+			if tex_id == 7 or tex_id == 8:
+				mat.albedo_color = Color(0.8, 0.75, 0.7)
+			elif tex_id == 15 or tex_id == 16:
+				mat.albedo_color = Color(0.9, 0.85, 0.8)
+		4:  # Escuro
+			mat.albedo_color = Color(0.05, 0.05, 0.05)
+		5:  # Areia
+			tex_color = load("res://Imagens/Grass001_1K-JPG_Color.jpg")
+			mat.albedo_color = Color(0.85, 0.8, 0.6)
+		6, 17, 18:  # Madeira, Escada, Pilar
+			tex_color = load("res://Imagens/Bark012_1K-JPG_Color.jpg")
+			tex_normal = load("res://Imagens/Bark012_1K-JPG_NormalGL.jpg")
+			mat.albedo_color = Color(0.7, 0.55, 0.4)
+		20:  # Sombra
+			mat.albedo_color = Color(0.08, 0.08, 0.1)
+		_:
+			mat.albedo_color = Color(0.55, 0.45, 0.30)
+			
+	if tex_color != null:
+		mat.albedo_texture = tex_color
+	if tex_normal != null:
+		mat.normal_enabled = true
+		mat.normal_texture = tex_normal
+		mat.normal_scale = 1.0
 	
 	_cache_materiais[tex_id] = mat
 	return mat
@@ -417,3 +546,10 @@ func _proxima(linhas: PoolStringArray, idx: int) -> Array:
 		if l != "":
 			return [l, i]
 	return ["", i]
+
+func brotar_arvore(pos_x: float, pos_y: float = 0.0):
+	if arvore_cena != null:
+		var nova_arvore = arvore_cena.instance()
+		add_child(nova_arvore)
+		nova_arvore.inicializar(pos_x, pos_y)
+		print("[LevelLoader] Nova arvore protetora plantada em X=", pos_x, " Y=", pos_y)

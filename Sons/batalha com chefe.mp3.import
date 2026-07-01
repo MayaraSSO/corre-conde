@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/batalha com chefe.mp3-44f4696a5707b028b01251d4737fd1e9.mp3str"
+
+[deps]
+
+source_file="res://Sons/batalha com chefe.mp3"
+dest_files=[ "res://.import/batalha com chefe.mp3-44f4696a5707b028b01251d4737fd1e9.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

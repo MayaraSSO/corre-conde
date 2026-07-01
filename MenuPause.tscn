@@ -34,6 +34,14 @@ margin_right = 637.0
 margin_bottom = 390.0
 text = "SAIR PARA O MENU PRINCIPAL"
 
+[node name="BotaoTutorial" type="Button" parent="."]
+margin_left = 412.0
+margin_top = 410.0
+margin_right = 612.0
+margin_bottom = 460.0
+text = "TUTORIAL: LIGADO"
+
 [connection signal="pressed" from="BotaoContinuar" to="." method="_on_BotaoContinuar_pressed"]
 [connection signal="pressed" from="BotaoMusica" to="." method="_on_BotaoMusica_pressed"]
 [connection signal="pressed" from="BotaoMenu" to="." method="_on_BotaoMenu_pressed"]
+[connection signal="pressed" from="BotaoTutorial" to="." method="_on_BotaoTutorial_pressed"]

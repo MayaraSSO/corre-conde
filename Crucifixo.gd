@@ -1,5 +1,7 @@
 extends Area
 
+export var dano_cruz = 10.0
+
 func _on_Crucifixo_body_entered(body):
 	if body.name == "Conde":
 		if body.temporizador_parry > 0.0:
@@ -8,7 +10,8 @@ func _on_Crucifixo_body_entered(body):
 			queue_free()
 			return
 			
-		body.energia_vital -= 10.0
+		body.ultimo_dano_recebido = "crucifixo"
+		body.energia_vital -= dano_cruz
 		body.tempo_exibir_dano = 0.35
 		var barra = body.get_node_or_null("HUD/BarraVida")
 		if barra != null:

@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Morte do Paladino.mp3-c8ec4813d2986ef33650de2ee7c9c9e3.mp3str"
+
+[deps]
+
+source_file="res://Sons/Morte do Paladino.mp3"
+dest_files=[ "res://.import/Morte do Paladino.mp3-c8ec4813d2986ef33650de2ee7c9c9e3.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

@@ -1,0 +1,7 @@
+.import/
+export.cfg
+*.a
+*.so
+*.exe
+*.zip
+*.tar.gz

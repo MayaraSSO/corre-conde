@@ -1,7 +1,15 @@
+# Godot 3.x arquivos gerados/import
 .import/
 export.cfg
-*.a
-*.so
+
+# Builds exportados
+Build/
 *.exe
-*.zip
-*.tar.gz
+*.pck
+
+# Arquivos de configuração local do editor
+.godot/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db

@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://TutorialPanel.gd" type="Script" id=1]
+[ext_resource path="res://Fontes/voodoo-vampire/VoodooVampire.ttf" type="DynamicFontData" id=2]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.08, 0.08, 0.12, 0.94 )
@@ -15,6 +16,19 @@ corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 shadow_color = Color( 0, 0, 0, 0.588235 )
 shadow_size = 8
+
+[sub_resource type="DynamicFont" id=2]
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFontData" id=3]
+font_path = "res://Fontes/castle-dracustein/Castle_Dracustein.ttf"
+
+[sub_resource type="DynamicFont" id=4]
+size = 18
+font_data = SubResource( 3 )
+
+[sub_resource type="DynamicFont" id=5]
+font_data = ExtResource( 2 )
 
 [node name="TutorialPanel" type="CanvasLayer"]
 pause_mode = 2
@@ -42,27 +56,30 @@ custom_constants/separation = 15
 
 [node name="Titulo" type="Label" parent="Panel/VBoxContainer"]
 margin_right = 710.0
-margin_bottom = 14.0
+margin_bottom = 19.0
 custom_colors/font_color = Color( 0.941176, 0.784314, 0.223529, 1 )
+custom_fonts/font = SubResource( 2 )
 text = "TUTORIAL"
 align = 1
 valign = 1
 
 [node name="Mensagem" type="RichTextLabel" parent="Panel/VBoxContainer"]
-margin_top = 29.0
+margin_top = 34.0
 margin_right = 710.0
-margin_bottom = 321.0
+margin_bottom = 316.0
 size_flags_vertical = 3
+custom_fonts/bold_font = SubResource( 4 )
 bbcode_enabled = true
 bbcode_text = "Instruções do tutorial aqui..."
 text = "Instruções do tutorial aqui..."
 scroll_active = false
 
 [node name="Instrucao" type="Label" parent="Panel/VBoxContainer"]
-margin_top = 336.0
+margin_top = 331.0
 margin_right = 710.0
 margin_bottom = 350.0
 custom_colors/font_color = Color( 0.65, 0.65, 0.7, 1 )
+custom_fonts/font = SubResource( 5 )
 text = "Pressione qualquer tecla para continuar..."
 align = 1
 valign = 1

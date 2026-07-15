@@ -3,7 +3,7 @@
 [ext_resource path="res://MenuPrincipal.gd" type="Script" id=1]
 [ext_resource path="res://Imagens/capa_menu_principal.png" type="Texture" id=2]
 [ext_resource path="res://Fontes/buffied/BUFFIED_.TTF" type="DynamicFontData" id=3]
-[ext_resource path="res://Fontes/castle-dracustein/Castle_Dracustein.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://Fontes/Castle_Dracustein.ttf" type="DynamicFontData" id=4]
 
 [sub_resource type="DynamicFont" id=1]
 size = 100

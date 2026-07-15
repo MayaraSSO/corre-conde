@@ -1,19 +1,12 @@
-# Projeto: Jogo Corre Conde: A Sombra da Eternidade 
-
-**Curso:** Ciência da Computação - UFRRJ
-
-**Disciplina:** Computação Gráfica
-
-**Professor:**  Bruno José Dembogurski, D.Sc.
-
-**Semestre:** 2026.1
-
-**Discentes:** Allan Sette Da Silva e Mayara da Silva Souza 
-
-
-# Corre Conde 🦇
+# Corre Conde: A Sombra da Eternidade 🦇
 
 Jogo 2.5D de side-scroller desenvolvido em **Godot Engine 3.x**, onde você controla o Conde em uma fuga desesperada contra a luz do sol, enfrentando lobos, o Paladino Supremo e outras ameaças em busca dos fragmentos do Anel Ancestral.
+
+## 🎮 Jogue online
+
+Uma versão jogável direto no navegador está disponível no itch.io:
+
+**[▶️ Jogar Corre Conde: A Sombra da Eternidade](https://mayarasso.itch.io/corre-conde-a-sombra-da-eternidade)**
 
 ## 📖 Sobre o jogo
 
@@ -99,7 +92,11 @@ O projeto já conta com um preset de exportação configurado (`export_presets.c
 - **Renderização**: 2.5D (sprites 3D/billboard sobre cenário 3D)
 - **Shaders**: GLSL via Godot Shader Language (`shader_type spatial`)
 
+## 👥 Autores
+
+- **Mayara SSO** — [GitHub](https://github.com/MayaraSSO)
+- **Allan Sette** — [LinkedIn](https://www.linkedin.com/in/allan-sette/)
+
 ---
 
-
-
+*Projeto em desenvolvimento contínuo — sinta-se livre para reportar bugs ou sugerir melhorias.*
